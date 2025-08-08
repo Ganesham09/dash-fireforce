@@ -78,12 +78,12 @@ export default function FireForceDashboard() {
     },
     {
       id: "Z2",
-      status: "Warning",
-      temperature: 32.8,
-      humidity: 38,
-      smokeLevel: 2.4,
+      status: "Safe",
+      temperature: 23.8,
+      humidity: 48,
+      smokeLevel: 0.15,
       peopleCount: 0,
-      heatIntensity: "Medium",
+      heatIntensity: "Low",
       fireType: null,
       robotId: null,
       robotStatus: null,
@@ -127,12 +127,12 @@ export default function FireForceDashboard() {
     },
     {
       id: "Z6",
-      status: "Warning",
-      temperature: 29.4,
-      humidity: 41,
-      smokeLevel: 1.8,
+      status: "Safe",
+      temperature: 23.4,
+      humidity: 50,
+      smokeLevel: 0.12,
       peopleCount: 0,
-      heatIntensity: "Medium",
+      heatIntensity: "Low",
       fireType: null,
       robotId: null,
       robotStatus: null,
@@ -169,19 +169,6 @@ export default function FireForceDashboard() {
     }
   }
 
-  // Function to get adjacent zones
-  const getAdjacentZones = (zoneId: string): string[] => {
-    const adjacencyMap: { [key: string]: string[] } = {
-      Z1: ["Z2", "Z4"],
-      Z2: ["Z1", "Z3", "Z5"],
-      Z3: ["Z2", "Z6"],
-      Z4: ["Z1", "Z5"],
-      Z5: ["Z2", "Z4", "Z6"],
-      Z6: ["Z3", "Z5"],
-    }
-    return adjacencyMap[zoneId] || []
-  }
-
   // Mock data simulation (fallback when API is not available)
   const simulateMockData = () => {
     const zoneIds = ["Z1", "Z2", "Z3", "Z4", "Z5", "Z6"]
@@ -192,8 +179,6 @@ export default function FireForceDashboard() {
 
   // Function to update zones based on fire location (for mock data)
   const updateZonesForFire = (fireZoneId: string) => {
-    const adjacentZones = getAdjacentZones(fireZoneId)
-    
     setZones(prevZones =>
       prevZones.map(zone => {
         if (zone.id === fireZoneId) {
@@ -214,25 +199,8 @@ export default function FireForceDashboard() {
             evacuationStarted: peopleCount > 0,
             lastUpdated: new Date().toISOString(),
           }
-        } else if (adjacentZones.includes(zone.id)) {
-          // Adjacent zones - warning
-          return {
-            ...zone,
-            status: "Warning" as ZoneStatus,
-            temperature: 28 + Math.random() * 7, // 28-35°C
-            humidity: 35 + Math.random() * 10,
-            smokeLevel: 1.5 + Math.random() * 2,
-            peopleCount: 0,
-            heatIntensity: "Medium" as HeatIntensity,
-            fireType: null,
-            robotId: null,
-            robotStatus: null,
-            alertGenerated: false,
-            evacuationStarted: false,
-            lastUpdated: new Date().toISOString(),
-          }
         } else {
-          // Safe zones
+          // All other zones are safe
           return {
             ...zone,
             status: "Safe" as ZoneStatus,
